@@ -8,7 +8,7 @@ This repository contains an unfinished issue tracker web app. Your goal is to
 make some of the following improvements to it:
 
 - [x] Fix the bug where it's not possible to add an issue titled "Can't log in"
-- [ ] Fix the bug where it's not possible to close an issue
+- [x] Fix the bug where it's not possible to close an issue
 - [x] Fix the bug where the edit screen doesn't change the description of the issue
 - [ ] Make REST endpoints return a more reasonable response when requesting non-existent resources
 - [ ] Add date formatting in the UI, to put timestamps in the user's local timezone
