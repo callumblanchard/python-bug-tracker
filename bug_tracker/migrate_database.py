@@ -20,12 +20,15 @@ def do_migrations(cursor):
 
 def _ensure_migrations_table(cursor):
     cursor.execute(
-        "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='migrations'"
+        "SELECT count(*) FROM sqlite_master "
+        + "WHERE type='table' "
+        + "AND name='migrations'"
     )
     if cursor.fetchone()[0] == 0:
         cursor.execute("""CREATE TABLE migrations(
             filename VARCHAR(255) PRIMARY KEY
         )""")
+
 
 if __name__ == '__main__':
     import sqlite3

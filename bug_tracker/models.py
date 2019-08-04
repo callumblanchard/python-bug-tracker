@@ -39,6 +39,7 @@ class RepositoryConnection(object):
     def close(self):
         self._conn.close()
 
+
 Issue = namedtuple('Issue', ['id', 'title', 'description', 'opened', 'closed'])
 
 
@@ -115,7 +116,9 @@ class IssueRepository(object):
                 )
             if 'closed' in kwargs:
                 cursor.execute(
-                    """UPDATE issues SET closed_datetime = '{}' WHERE id = {}"""
+                    """
+                    UPDATE issues SET closed_datetime = '{}' WHERE id = {}
+                    """
                     .format(kwargs['closed'].isoformat(), issue_id)
                 )
         finally:

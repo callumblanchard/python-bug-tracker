@@ -5,7 +5,7 @@ import tempfile
 
 from unittest import TestCase, main
 from .models import Repository
-from .migrate_database import do_migrations
+from .migrate_database import do_migrations # noqa
 
 
 class IssueRepositoryTest(TestCase):
@@ -57,6 +57,7 @@ class IssueRepositoryTest(TestCase):
         self.assertEqual(issue.title, 'New Title')
         self.assertEqual(issue.description, 'New Description')
         self.assertEqual(issue.closed, datetime.datetime(2020, 1, 1))
+
 
 if __name__ == '__main__':
     main()

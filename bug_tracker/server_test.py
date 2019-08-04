@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 import datetime
 import os
-import pytz
+import pytz # noqa
 import tempfile
 
 from dateutil.parser import parse as parse_date
@@ -55,6 +55,7 @@ class APITest(TestCase):
         fetch_resp_2 = self.client.simulate_get(new_location)
         issue_json_2 = fetch_resp_2.json
         self.assertEqual(issue_json_2['description'], "An updated issue")
+
 
 if __name__ == '__main__':
     main()
