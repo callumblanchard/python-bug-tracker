@@ -123,7 +123,9 @@ class IssueRepository(object):
                     """
                     UPDATE issues SET closed_datetime = '{}' WHERE id = {}
                     """
-                    .format(kwargs['closed'].isoformat(), issue_id)
+                    .format(
+                        kwargs['closed'], issue_id,
+                    )
                 )
         finally:
             cursor.close()

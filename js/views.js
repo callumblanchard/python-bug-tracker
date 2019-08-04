@@ -40,12 +40,19 @@ class ViewIssue {
     return detail
     ? m('div',[
         m('.row', [
-          m('h1.col-sm-11', detail.title),
+          m('h1.col-sm-9', detail.title),
           m('.col-sm-1',
             m(
               'a.btn.btn-primary',
               {href: `/issues/${this.issueId}/edit`, oncreate: m.route.link},
               'Edit'
+            )
+          ),
+          m('.col-sm-2',
+            m(
+              'a.btn.btn-danger',
+              {href: `/issues/${this.issueId}/close`, oncreate: m.route.link},
+              'Close Issue'
             )
           )
         ]),
@@ -104,6 +111,21 @@ class CreateIssue {
   }
 }
 
+class CloseIssue {
+  constructor(vnode) {
+    this.model = vnode.attrs.model
+    this.issueId = vnode.attrs.issueId
+  }
+  async view() {
+    const closedTime = new Date().toISOString();
+    await this.model.updateIssue(this.issueId, {
+      closed: closedTime
+    })
+    m.route.set(`/issues`)
+    m.redraw()
+  }
+}
+
 class IssueEditor {
   constructor(vnode) {
     this.title = vnode.attrs.title
@@ -111,7 +133,7 @@ class IssueEditor {
     this.onSubmit = vnode.attrs.onSubmit
   }
   view() {
-    return m('form', {onsubmit: e => this.onSubmit({title: this.title, descriptionText: this.descriptionText})}, [
+    return m('form', {onsubmit: e => this.onSubmit({title: this.title, description: this.descriptionText})}, [
       m('.form-group', [
         m('label', {'for': 'title-input'}, 'Issue Title'),
         m('input.form-control#title-input', {value: this.title, oninput: (e) => {this.title = e.target.value}})
@@ -120,7 +142,7 @@ class IssueEditor {
         m('label', {'for': 'description-input'}, 'Description'),
         m('textarea.form-control#description-input', {oninput: (e) => {this.descriptionText = e.target.value}}, this.descriptionText)
       ]),
-      m('button.btn.btn-primary#save-button', {type: 'submit'}, 'Save')
+      m('button.btn.btn-primary#save-button', {type: 'submit'}, 'Save'),
     ])
   }
 }
@@ -143,4 +165,4 @@ const ToolbarContainer = {
   }
 }
 
-module.exports = {IssuesList, ViewIssue, EditIssue, CreateIssue, IssueEditor, ToolbarContainer}
+module.exports = {IssuesList, ViewIssue, EditIssue, CreateIssue, IssueEditor, ToolbarContainer, CloseIssue}
