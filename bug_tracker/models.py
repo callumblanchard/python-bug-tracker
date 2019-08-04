@@ -95,10 +95,7 @@ class IssueRepository(object):
                 """INSERT INTO issues(
                     title,
                     description
-                ) VALUES('{}', '{}')""".format(
-                    title.replace("'", "''"),
-                    description.replace("'", "''"),
-                )
+                ) VALUES('{}', '{}')""".format(title, description)
             )
             cursor.execute("select last_insert_rowid()")
             return cursor.fetchone()[0]

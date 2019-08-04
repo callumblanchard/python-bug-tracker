@@ -133,7 +133,10 @@ class IssueEditor {
     this.onSubmit = vnode.attrs.onSubmit
   }
   view() {
-    return m('form', {onsubmit: e => this.onSubmit({title: this.title, description: this.descriptionText})}, [
+    return m('form', {onsubmit: e => this.onSubmit({
+      title: this.title.replace("'", "''"),
+      description: this.descriptionText.replace("'", "''")
+    })}, [
       m('.form-group', [
         m('label', {'for': 'title-input'}, 'Issue Title'),
         m('input.form-control#title-input', {value: this.title, oninput: (e) => {this.title = e.target.value}})
