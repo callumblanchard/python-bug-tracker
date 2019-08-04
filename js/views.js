@@ -102,8 +102,8 @@ class CreateIssue {
     return m(IssueEditor, {
       title: '',
       descriptionText: '',
-      onSubmit: async ({descriptionText, title}) => {
-        await this.model.createIssue({description: descriptionText, title: title})
+      onSubmit: async (fields) => {
+        await this.model.createIssue(fields)
         m.route.set(`/issues`)
         m.redraw()
       }
