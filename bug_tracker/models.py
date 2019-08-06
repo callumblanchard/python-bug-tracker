@@ -44,7 +44,10 @@ Issue = namedtuple('Issue', ['id', 'title', 'description', 'opened', 'closed'])
 
 
 def make_issue(row):
-    id_, title, description, opened, closed = row
+    try:
+        id_, title, description, opened, closed = row
+    except TypeError:
+        return None
     if opened is not None:
         opened = dateutil.parser.parse(opened)
     if closed is not None:

@@ -10,7 +10,7 @@ make some of the following improvements to it:
 - [x] Fix the bug where it's not possible to add an issue titled "Can't log in"
 - [x] Fix the bug where it's not possible to close an issue
 - [x] Fix the bug where the edit screen doesn't change the description of the issue
-- [ ] Make REST endpoints return a more reasonable response when requesting non-existent resources
+- [x] Make REST endpoints return a more reasonable response when requesting non-existent resources
 - [ ] Add date formatting in the UI, to put timestamps in the user's local timezone
 - [ ] Add a login and registration page, to enable username/password login
   - [ ] Read-only pages don't need users to be logged in, but new/edit/update pages do

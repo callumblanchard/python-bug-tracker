@@ -1,5 +1,19 @@
 const m = require('mithril')
 
+class UsersModel {
+  constructor() {
+    this.users = {}
+  }
+  async createUser(credentials) {
+    await m.request({
+      method: "POST",
+      url: '/users',
+      data: credentials,
+    })
+    return await this.users[userid]
+  }
+}
+
 class IssuesModel {
   constructor() {
     this.issues = {}
@@ -38,4 +52,4 @@ class IssuesModel {
   }
 }
 
-module.exports = {IssuesModel}
+module.exports = {UsersModel, IssuesModel}

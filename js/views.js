@@ -1,5 +1,81 @@
 const m = require('mithril')
 
+class Login {
+  constructor(vnode) {
+    this.model = vnode.attrs.model
+  }
+  oninit() {
+    this.email = ''
+    this.password = ''
+  }
+  view() {
+    return m('form', {onsubmit: e => this.onSubmit({
+      email: this.email,
+      password: this.password
+    })}, m(UserInputField, {fields: [
+      m('.form-group', [
+        m('label', {'for': 'email-input'}, 'E-mail Address'),
+        m('input.form-control#email-input', {value: this.email, oninput: (e) => {this.email = e.target.value}})
+      ]),
+      m('.form-group', [
+        m('label', {'for': 'password-input'}, 'Password'),
+        m('input.form-control#password-input', {type: 'password', oninput: (e) => {this.password = e.target.value}}, this.password)
+      ]),
+      m('button.btn.btn-primary#login-button', {type: 'submit'}, 'Login'),
+    ]})
+    )
+  }
+}
+
+class Register {
+  constructor(vnode) {
+    this.model = vnode.attrs.model
+  }
+  oninit() {
+    this.email = '',
+    this.password = '',
+    this.confirmPassword = ''
+  }
+  view() {
+    return m('form', {onSubmit: async (credentials) => {
+      await this.model.createUser(credentials)
+        m.route.set(`/issues`)
+        m.redraw()
+    }}, m(UserInputField, {fields: [
+      m('.form-group', [
+        m('label', {'for': 'email-input'}, 'E-mail Address'),
+        m('input.form-control#email-input', {value: this.email, oninput: (e) => {this.email = e.target.value}})
+      ]),
+      m('.form-group', [
+        m('label', {'for': 'password-input'}, 'Password'),
+        m('input.form-control#password-input', {type: 'password', oninput: (e) => {this.password = e.target.value}}, this.password)
+      ]),
+      m('.form-group', [
+        m('label', {'for': 'confirm-password-input'}, 'Confirm Password'),
+        m('input.form-control#confirm-password-input', {type: 'password', oninput: (e) => {this.confirmPassword = e.target.value}}, this.confirmPassword)
+      ]),
+      m('button.btn.btn-primary#login-button', {type: 'submit'}, 'Register'),
+    ]}))
+  }
+}
+
+class UserInputField {
+  constructor(vnode) {
+    this.fields = vnode.attrs.fields
+  }
+  view() {
+    return [
+      m('.container', [
+        m('.row', [
+          m('.col-lg-3.col-md-2'),
+          m('.col-lg-6.col-md-2', this.fields)
+        ]),
+        m('.col-lg-3.col-md-2')
+      ])
+    ]
+  }
+}
+
 class IssuesList {
   constructor(vnode) {
     this.model = vnode.attrs.model
@@ -153,19 +229,39 @@ class IssueEditor {
 const ToolbarContainer = {
   view(vnode) {
     return m('div', [
-      m('nav.navbar.navbar-expand-lg.navbar-light.bg-light', [
-        m('a.navbar-brand', {href: '/issues', oncreate: m.route.link}, 'Bug Tracker'),
-        m('.collapse.navbar-collapse', [
-          m('ul.navbar-nav', [
-            m('li.nav-item', [
-              m('a.nav-link', {href: '/issues/create', oncreate: m.route.link}, 'Create')
+        m('nav.navbar.navbar-expand-lg.navbar-light.bg-light', [
+          m('.container', [
+            m('a.navbar-brand', {href: '/issues', oncreate: m.route.link}, 'Bug Tracker'),
+            m('.collapse.navbar-collapse', [
+              m('ul.navbar-nav.mr-auto', [
+                m('li.nav-item', [
+                  m('a.nav-link', {href: '/issues/create', oncreate: m.route.link}, 'Create'),
+                ]),
+              ]),
+              m('ul.navbar-nav', [
+                m('li.nav_item', [
+                  m('a.nav-link', {href: '/login', oncreate: m.route.link}, 'Login'),
+                ]),
+                m('li.nav_item', [
+                  m('a.nav-link', {href: '/register', oncreate: m.route.link}, 'Register'),
+                ])
+              ])
             ])
-          ])
-        ])
-      ]),
-      m('.container', vnode.children)
+        ]),
+        ]),
+        m('.container', vnode.children)
     ])
   }
 }
 
-module.exports = {IssuesList, ViewIssue, EditIssue, CreateIssue, IssueEditor, ToolbarContainer, CloseIssue}
+module.exports = {
+  Login,
+  Register,
+  IssuesList,
+  ViewIssue,
+  EditIssue,
+  CreateIssue,
+  IssueEditor,
+  ToolbarContainer,
+  CloseIssue,
+}
