@@ -193,10 +193,7 @@ class CloseIssue {
     this.issueId = vnode.attrs.issueId
   }
   async view() {
-    const closedTime = new Date().toISOString();
-    await this.model.updateIssue(this.issueId, {
-      closed: closedTime
-    })
+    await this.model.closeIssue(this.issueId)
     m.route.set(`/issues`)
     m.redraw()
   }
@@ -210,15 +207,15 @@ class IssueEditor {
   }
   view() {
     return m('form', {onsubmit: e => this.onSubmit({
-      title: this.title.replace("'", "''"),
-      description: this.descriptionText.replace("'", "''")
+      title: this.title,
+      description: this.descriptionText,
     })}, [
       m('.form-group', [
         m('label', {'for': 'title-input'}, 'Issue Title'),
         m('input.form-control#title-input', {value: this.title, oninput: (e) => {this.title = e.target.value}})
       ]),
       m('.form-group', [
-        m('label', {'for': 'description-input'}, 'Description'),
+        m('label', {'for': 'description-input'}, 'Issue Description'),
         m('textarea.form-control#description-input', {oninput: (e) => {this.descriptionText = e.target.value}}, this.descriptionText)
       ]),
       m('button.btn.btn-primary#save-button', {type: 'submit'}, 'Save'),

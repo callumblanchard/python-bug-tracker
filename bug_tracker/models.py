@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import dateutil.parser
 import sqlite3
 from collections import namedtuple
+from datetime import datetime
 
 from .migrate_database import do_migrations
 
@@ -86,7 +87,9 @@ class IssueRepository(object):
                     opened_datetime,
                     closed_datetime
                     FROM issues
-                    WHERE id = {}""".format(issue_id))
+                    WHERE id = ?""",
+                (issue_id,)
+            )
             return make_issue(cursor.fetchone())
         finally:
             cursor.close()
@@ -98,7 +101,8 @@ class IssueRepository(object):
                 """INSERT INTO issues(
                     title,
                     description
-                ) VALUES('{}', '{}')""".format(title, description)
+                ) VALUES(?, ?)""",
+                (title, description,)
             )
             cursor.execute("select last_insert_rowid()")
             return cursor.fetchone()[0]
@@ -110,22 +114,24 @@ class IssueRepository(object):
         try:
             if 'title' in kwargs:
                 cursor.execute(
-                    """UPDATE issues SET title = '{}' WHERE id = {}"""
-                    .format(kwargs['title'], issue_id)
+                    "UPDATE issues SET title = ? WHERE id = ?",
+                    (kwargs['title'], issue_id,)
                 )
             if 'description' in kwargs:
                 cursor.execute(
-                    """UPDATE issues SET description = '{}' WHERE id = {}"""
-                    .format(kwargs['description'], issue_id)
+                    "UPDATE issues SET description = ? WHERE id = ?",
+                    (kwargs['description'], issue_id,)
                 )
-            if 'closed' in kwargs:
-                cursor.execute(
-                    """
-                    UPDATE issues SET closed_datetime = '{}' WHERE id = {}
-                    """
-                    .format(
-                        kwargs['closed'], issue_id,
-                    )
+        finally:
+            cursor.close()
+
+    def close_issue(self, issue_id):
+        cursor = self._conn.cursor()
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        try:
+            cursor.execute(
+                    """UPDATE issues SET closed_datetime = ? WHERE id = ?""",
+                    (now, issue_id,)
                 )
         finally:
             cursor.close()

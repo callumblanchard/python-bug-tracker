@@ -50,6 +50,12 @@ class IssuesModel {
     })
     return await this.loadIssues()
   }
+  async closeIssue(issueId) {
+    await m.request({
+      method: "POST",
+      url: `/issues/${issueId}/close`,
+    })
+  }
 }
 
 module.exports = {UsersModel, IssuesModel}

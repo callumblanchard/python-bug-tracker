@@ -40,7 +40,7 @@ class IssueResource(object):
 
     def on_get(self, req, resp, issue_id):
         with self._repo.open() as repo:
-            issue = repo.issues.fetch_issue(int(issue_id))
+            issue = repo.issues.fetch_issue(issue_id)
             if issue is None:
                 resp.media = {"message": "Issue Not Found"}
                 resp.status = falcon.HTTP_404
@@ -52,4 +52,14 @@ class IssueResource(object):
         with self._repo.open() as repo:
             update = req.media
             repo.issues.update_issue(issue_id, **update)
+            resp.status = falcon.HTTP_204
+
+
+class IssueClose(object):
+    def __init__(self, repo):
+        self._repo = repo
+
+    def on_post(self, req, resp, issue_id):
+        with self._repo.open() as repo:
+            repo.issues.close_issue(issue_id)
             resp.status = falcon.HTTP_204
