@@ -3,7 +3,14 @@ import argparse
 import falcon
 import os
 
-from .resources import IssueResource, IssuesResource, IssueClose
+from .resources import (
+    IssueResource,
+    IssuesResource,
+    IssueClose,
+    UsersResource,
+    UserResource,
+    UserAuth,
+)
 from .models import Repository
 
 
@@ -23,6 +30,9 @@ def make_api(database_location, migrate_database=True):
     api.add_route('/issues', IssuesResource(repo))
     api.add_route('/issues/{issue_id}', IssueResource(repo))
     api.add_route('/issues/{issue_id}/close', IssueClose(repo))
+    api.add_route('/users', UsersResource(repo))
+    api.add_route('/users/{user_id}', UserResource(repo))
+    api.add_route('/users/auth', UserAuth(repo))
     static_dir = os.path.abspath(os.path.join(__file__, '..', '..', 'dist'))
     api.add_static_route('/', static_dir)
     return api

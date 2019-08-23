@@ -33,7 +33,7 @@ Getting Started
 
 ### Prerequisites
 
-- Ensure you have Python 2.7 and NodeJS 8 or higher
+- Ensure you have Python 3.7 and NodeJS 8 or higher
 - Create a new virtualenv and `pip install -r requirements.txt`
 - Obtain the necessary Node modules with `npm install`
 

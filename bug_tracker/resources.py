@@ -12,6 +12,50 @@ def _issue_to_json(issue):
     }
 
 
+class UsersResource(object):
+    def __init__(self, repo):
+        self._repo = repo
+
+    def on_get(self, req, resp):
+        with self._repo.open() as repo: # noqa
+            pass
+
+    def on_post(self, req, resp):
+        with self._repo.open() as repo:
+            new_user = req.media
+            repo.users.create_user(
+                new_user['user'],
+                new_user['password'],
+                new_user['confirmPassword'],
+            )
+            resp.status = falcon.HTTP_201
+
+
+class UserResource(object):
+    def __init__(self, repo):
+        self._repo = repo
+
+    def on_put(self, req, resp, user_id):
+        with self._repo.open() as repo:
+            new_user = req.media
+            repo.users.update_user(
+                user_id,
+                new_user['oldPassword'],
+                new_user['newPassword'],
+                new_user['confirmNewPassword'],
+            )
+            resp.status = falcon.HTTP_204
+
+
+class UserAuth(object):
+    def __init__(self, repo):
+        self._repo = repo
+
+    def on_post(self, req, resp):
+        with self._repo.open() as repo: # noqa
+            pass
+
+
 class IssuesResource(object):
     def __init__(self, repo):
         self._repo = repo

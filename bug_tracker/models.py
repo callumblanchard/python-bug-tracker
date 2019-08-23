@@ -27,6 +27,7 @@ class RepositoryConnection(object):
     def __init__(self, conn):
         self._conn = conn
         self.issues = IssueRepository(self._conn)
+        self.users = UserRepository(self._conn)
 
     def __enter__(self):
         return self
@@ -39,6 +40,65 @@ class RepositoryConnection(object):
 
     def close(self):
         self._conn.close()
+
+
+User = namedtuple('User', ['id', 'user'])
+
+
+def make_user(row):
+    try:
+        id_, user = row
+    except TypeError:
+        return None
+    return User(id_, user)
+
+
+class UserRepository(object):
+    def __init__(self, conn):
+        self._conn = conn
+
+    def create_user(
+        self, user, password, confirm_password
+    ):
+        cursor = self._conn.cursor()
+        try:
+            cursor.execute(
+                """INSERT INTO users(
+                    username,
+                    password
+                ) VALUES(?, ?)""",
+                (user, password,)
+            )
+        finally:
+            cursor.close()
+
+    def update_user(
+        self, user_id, old_password, new_password, confirm_new_password
+    ):
+        cursor = self._conn.cursor()
+        try:
+            cursor.execute(
+                "UPDATE users SET password = ? WHERE id = ?",
+                (new_password, user_id,)
+            )
+        finally:
+            cursor.close()
+
+    def list_users(self):
+        cursor = self._conn.cursor()
+        try:
+            cursor.execute(
+                """SELECT
+                    id,
+                    username
+                    FROM users
+                    ORDER BY username""")
+            return [make_user(row) for row in cursor.fetchall()]
+        finally:
+            cursor.close()
+
+    def authenticate_user(self, user, password):
+        pass
 
 
 Issue = namedtuple('Issue', ['id', 'title', 'description', 'opened', 'closed'])
