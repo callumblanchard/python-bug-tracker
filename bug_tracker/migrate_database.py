@@ -10,7 +10,7 @@ def do_migrations(cursor):
             'SELECT count(*) FROM migrations WHERE filename = ?', [migration]
         )
         if cursor.fetchone()[0] == 0:
-            print "Running migration", migration
+            print("Running migration", migration)
             with open(os.path.join(migrations_dir, migration)) as f:
                 cursor.execute(f.read())
                 cursor.execute(

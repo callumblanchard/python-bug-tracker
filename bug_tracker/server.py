@@ -7,16 +7,16 @@ from .resources import IssueResource, IssuesResource, IssueClose
 from .models import Repository
 
 
-def _index_middleware(app):
-    def handler(environ, start_response):
-        if environ['PATH_INFO'] == '/':
-            environ['PATH_INFO'] = '/index.html'
-        return app(environ, start_response)
-    return handler
+class IndexMiddleware:
+    def process_request(self, req, resp):
+        if req.path == '/':
+            req.path = '/index.html'
 
 
 def make_api(database_location, migrate_database=True):
-    api = falcon.API()
+    api = falcon.API(middleware=[
+        IndexMiddleware(),
+    ])
     repo = Repository(database_location)
     if migrate_database:
         repo.migrate_database()
@@ -25,7 +25,7 @@ def make_api(database_location, migrate_database=True):
     api.add_route('/issues/{issue_id}/close', IssueClose(repo))
     static_dir = os.path.abspath(os.path.join(__file__, '..', '..', 'dist'))
     api.add_static_route('/', static_dir)
-    return _index_middleware(api)
+    return api
 
 
 if __name__ == '__main__':
@@ -50,5 +50,5 @@ if __name__ == '__main__':
 
     api = make_api(args.database_location, not args.no_database_migrations)
     httpd = make_server(args.interface, args.port, api)
-    print "Serving on {args.interface}:{args.port}".format(args=args)
+    print("Serving on {args.interface}:{args.port}".format(args=args))
     httpd.serve_forever()

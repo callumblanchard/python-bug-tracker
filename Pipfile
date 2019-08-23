@@ -5,12 +5,17 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+black = "*"
 
 [packages]
 falcon = "~=1.4.1"
 python-dateutil = "~=2.7.2"
 pytz = ">=2018.4"
-Werkzeug = "~=0.14.1"
+Werkzeug = "~=0.15.3"
+falcon-auth = "*"
 
 [requires]
-python_version = "2.7"
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
