@@ -1,61 +1,71 @@
-const m = require('mithril')
+const m = require('mithril');
 
 class UsersModel {
   constructor() {
-    this.users = {}
+    this.users = {};
   }
+
   async createUser(credentials) {
-    await m.request({
-      method: "POST",
+    console.log('request sent');
+    const user = await m.request({
+      method: 'POST',
       url: '/users',
       data: credentials,
-    })
-    return await this.users[userid]
+    });
+    this.users[user.id] = user;
+    return user;
   }
 }
 
 class IssuesModel {
   constructor() {
-    this.issues = {}
+    this.issues = {};
   }
+
   async loadIssues() {
-    let response = await m.request('/issues')
-    this.issues = {}
-    for (let issue of response.issues) {
-      this.issues[issue.id] = issue
-    }
-    return this.issues
+    const response = await m.request('/issues');
+    this.issues = {};
+    response.issues.forEach((issue) => {
+      this.issues[issue.id] = issue;
+    });
+    return this.issues;
   }
+
   get list() {
-    return Object.keys(this.issues).map(i => this.issues[i])
+    return Object.keys(this.issues).map((i) => this.issues[i]);
   }
+
   async loadIssue(issueId) {
-    let response = await m.request(`/issues/${issueId}`)
-    this.issues[issueId] = response
-    return response
+    const response = await m.request(`/issues/${issueId}`);
+    this.issues[issueId] = response;
+    return response;
   }
+
   async updateIssue(issueId, fields) {
     await m.request({
-      method: "PUT",
+      method: 'PUT',
       url: `/issues/${issueId}`,
-      data: fields
-    })
-    return await this.loadIssue(issueId)
+      data: fields,
+    });
+    return this.loadIssue(issueId);
   }
+
   async createIssue(fields) {
     await m.request({
-      method: "POST",
-      url: `/issues`,
-      data: fields
-    })
-    return await this.loadIssues()
+      method: 'POST',
+      url: '/issues',
+      data: fields,
+    });
+    return this.loadIssues();
   }
+
   async closeIssue(issueId) {
     await m.request({
-      method: "POST",
+      method: 'POST',
       url: `/issues/${issueId}/close`,
-    })
+    });
+    return this.loadIssues();
   }
 }
 
-module.exports = {UsersModel, IssuesModel}
+module.exports = { UsersModel, IssuesModel };
