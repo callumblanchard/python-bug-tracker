@@ -5,13 +5,23 @@ class Dashboard {
     this.model = vnode.attrs.model;
   }
 
-  static get view() {
+  oninit() {
+    this.model.loadIssues();
+  }
+
+  view() {
     return [
-      m(
-        'a.btn.btn-primary',
-        { href: '/issues', oncreate: m.route.link },
-        'View Issues',
-      ),
+      m('.container', [
+        m(
+          'a.btn.btn-primary',
+          { href: '/issues', oncreate: m.route.link },
+          'View Issues',
+        ),
+        m('div', [
+          m('p.h3', `Number of open issues: ${this.model.countOpen}`),
+          m('p.h3', `Number of issues closed in the last week: ${this.model.countCLW}`),
+        ]),
+      ]),
     ];
   }
 }
@@ -81,13 +91,16 @@ class Register {
     return m('form', {
       onsubmit: () => {
         console.log('submitting');
-        this.model.createUser({
-          user: this.email,
-          password: this.password,
-          confirmPassword: this.confirmPassword,
-        });
-        m.route.set('/issues');
-        m.redraw();
+        if (this.password !== this.confirmPassword) {
+          console.log('passwords do not match.');
+        } else {
+          this.model.createUser({
+            user: this.email,
+            password: this.password,
+          });
+          m.route.set('/issues');
+          m.redraw();
+        }
       },
     }, m(UserInputField, {
       fields: [
@@ -267,7 +280,7 @@ const ToolbarContainer = {
     return m('div', [
       m('nav.navbar.navbar-expand-lg.navbar-light.bg-light', [
         m('.container', [
-          m('a.navbar-brand', { href: '/issues', oncreate: m.route.link }, 'Bug Tracker'),
+          m('a.navbar-brand', { href: '/home', oncreate: m.route.link }, 'Bug Tracker'),
           m('.collapse.navbar-collapse', [
             m('ul.navbar-nav.mr-auto', [
               m('li.nav-item', [

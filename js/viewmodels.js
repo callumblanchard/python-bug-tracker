@@ -35,6 +35,27 @@ class IssuesModel {
     return Object.keys(this.issues).map((i) => this.issues[i]);
   }
 
+  get counta() {
+    return Object.keys(this.issues).length;
+  }
+
+  get countOpen() {
+    return Object.keys(this.issues).reduce((rtn, i) => {
+      if (this.issues[i].closed === null) return (rtn + 1);
+      return rtn;
+    }, 0);
+  }
+
+  get countCLW() {
+    let oneWeekAgo = new Date();
+    oneWeekAgo = oneWeekAgo.getTime() - (7 * 24 * 60 * 60 * 1000);
+    console.log(oneWeekAgo);
+    return Object.keys(this.issues).reduce((rtn, i) => {
+      if (new Date(this.issues[i].closed).getTime() > oneWeekAgo) return (rtn + 1);
+      return rtn;
+    }, 0);
+  }
+
   async loadIssue(issueId) {
     const response = await m.request(`/issues/${issueId}`);
     this.issues[issueId] = response;

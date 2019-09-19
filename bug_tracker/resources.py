@@ -26,7 +26,6 @@ class UsersResource(object):
             repo.users.create_user(
                 new_user['user'],
                 new_user['password'],
-                new_user['confirmPassword'],
             )
             resp.status = falcon.HTTP_201
 
@@ -42,7 +41,6 @@ class UserResource(object):
                 user_id,
                 new_user['oldPassword'],
                 new_user['newPassword'],
-                new_user['confirmNewPassword'],
             )
             resp.status = falcon.HTTP_204
 

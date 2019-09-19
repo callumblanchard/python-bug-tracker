@@ -3,8 +3,13 @@ import dateutil.parser
 import sqlite3
 from collections import namedtuple
 from datetime import datetime
+import hashlib
 
 from .migrate_database import do_migrations
+
+
+def password_sha256(password: str):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 
 class Repository(object):
@@ -58,7 +63,7 @@ class UserRepository(object):
         self._conn = conn
 
     def create_user(
-        self, user, password, confirm_password
+        self, user, password
     ):
         cursor = self._conn.cursor()
         try:
@@ -67,13 +72,13 @@ class UserRepository(object):
                     username,
                     password
                 ) VALUES(?, ?)""",
-                (user, password,)
+                (user, password_sha256(password),)
             )
         finally:
             cursor.close()
 
     def update_user(
-        self, user_id, old_password, new_password, confirm_new_password
+        self, user_id, old_password, new_password
     ):
         cursor = self._conn.cursor()
         try:

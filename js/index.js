@@ -18,8 +18,8 @@ const usersModel = new UsersModel();
 
 // let isLoggedIn = false;
 
-m.route(document.body, '/issues', {
-  '/': {
+m.route(document.body, '/home', {
+  '/home': {
     render() {
       return m(ToolbarContainer, m(Dashboard, { model: issuesModel }));
     },
