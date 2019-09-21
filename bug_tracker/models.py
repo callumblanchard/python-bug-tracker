@@ -4,12 +4,31 @@ import sqlite3
 from collections import namedtuple
 from datetime import datetime
 import hashlib
+import binascii
+import os
 
 from .migrate_database import do_migrations
 
 
-def password_sha256(password: str):
-    return hashlib.sha256(password.encode()).hexdigest()
+def hash_password(password):
+    """Hash a password for storing."""
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+    pwdhash = hashlib.pbkdf2_hmac(
+        'sha512', password.encode('utf-8'), salt, 100000
+    )
+    pwdhash = binascii.hexlify(pwdhash)
+    return (salt + pwdhash).decode('ascii')
+
+
+def verify_password(stored_passwd, provided_passwd):
+    """Verify a stored password against one provided by user"""
+    salt = stored_passwd[:64]
+    stored_password = stored_passwd[64:]
+    pwdhash = hashlib.pbkdf2_hmac(
+        'sha512', provided_passwd.encode('utf-8'), salt.encode('ascii'), 100000
+    )
+    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
+    return pwdhash == stored_password
 
 
 class Repository(object):
@@ -66,28 +85,45 @@ class UserRepository(object):
         self, user, password
     ):
         cursor = self._conn.cursor()
+        pw_hash = hash_password(password)
         try:
             cursor.execute(
                 """INSERT INTO users(
                     username,
                     password
                 ) VALUES(?, ?)""",
-                (user, password_sha256(password),)
+                (user, pw_hash,)
             )
+        finally:
+            cursor.close()
+
+    def verify_user(
+        self, user_id, password
+    ) -> bool:
+        cursor = self._conn.cursor()
+        try:
+            cursor.execute(
+                "SELECT password WHERE user = ?",
+                (user_id,)
+            )
+            stored_password = cursor.fetchone()[0]
+            return verify_password(stored_password, password)
         finally:
             cursor.close()
 
     def update_user(
         self, user_id, old_password, new_password
     ):
-        cursor = self._conn.cursor()
-        try:
-            cursor.execute(
-                "UPDATE users SET password = ? WHERE id = ?",
-                (new_password, user_id,)
-            )
-        finally:
-            cursor.close()
+        if self.verify_user(user_id, old_password):
+            cursor = self._conn.cursor()
+            new_pw_hash = hash_password(new_password)
+            try:
+                cursor.execute(
+                    "UPDATE users SET password = ? WHERE id = ?",
+                    (new_pw_hash, user_id,)
+                )
+            finally:
+                cursor.close()
 
     def list_users(self):
         cursor = self._conn.cursor()
