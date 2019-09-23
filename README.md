@@ -75,7 +75,7 @@ I decided to pick the task up a couple of weeks after the feedback, in order to 
 - Migrated Python to version 3.7
 - Fixed ISO formatting
 - Added dashboard page
-- Added users model and got registration working, including storing passwords as sha256 hash
+- Added users model and got registration working, including storing passwords as PBKDF2 hash
 
 Tasks I did not finish:
 
